@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Arcanedev\LaravelNotes\Models;
 
 use Arcanedev\Support\Database\PrefixedModel;
+use Spatie\Tags\HasTags;
 use Illuminate\Support\Arr;
 
 /**
@@ -13,6 +14,8 @@ use Illuminate\Support\Arr;
  * @author   ARCANEDEV <arcanedev.maroc@gmail.com>
  *
  * @property  int                                  $id
+ * @property  int                                  $folder_id
+ * @property  string                               $title
  * @property  string                               $content
  * @property  int                                  $noteable_id
  * @property  string                               $noteable_type
@@ -35,9 +38,15 @@ class Note extends PrefixedModel
      *
      * @var array
      */
+
+    /* Hastags comes from the Laravel tags pacakge that we installed */
+    use HasTags;
+
     protected $fillable = [
+        'folder_id',
         'content',
         'author_id',
+        'title',
     ];
 
     /**
@@ -56,6 +65,7 @@ class Note extends PrefixedModel
      * @var array
      */
     protected $casts = [
+        'folder_id'   => 'integer',
         'id'          => 'integer',
         'noteable_id' => 'integer',
         'author_id'   => 'integer',
@@ -106,4 +116,12 @@ class Note extends PrefixedModel
     {
         return $this->belongsTo(config('notes.authors.model'));
     }
+
+
+    public function folder()
+    {
+        return $this->belongsTo(Folder::class);
+    }
+
+
 }

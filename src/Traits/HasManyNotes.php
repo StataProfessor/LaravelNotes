@@ -45,12 +45,17 @@ trait HasManyNotes
      *
      * @return \Arcanedev\LaravelNotes\Models\Note
      */
-    public function createNote($content, $author = null, $reload = true)
+    public function createNote($content, $author = null, $reload = true, $title = null, $folder_id = null)
     {
         /** @var \Arcanedev\LaravelNotes\Models\Note $note */
         $note = $this->notes()->create(
-            $this->prepareNoteAttributes($content, $author)
+            $this->prepareNoteAttributes($content, $author, $title, $folder_id)
         );
+
+        // Attach tags to the note
+        if (!empty($tags)) {
+            $note->attachTags($tags);
+        }
 
         if ($reload) {
             $relations = array_merge(
@@ -89,11 +94,13 @@ trait HasManyNotes
      *
      * @return array
      */
-    protected function prepareNoteAttributes($content, Model $author = null)
+    protected function prepareNoteAttributes($content, Model $author = null, $title = null, $folder_id = null)
     {
         return [
             'author_id' => is_null($author) ? $this->getCurrentAuthorId() : $author->getKey(),
             'content'   => $content,
+            'title'     => $title,
+            'folder_id' => $folder_id,
         ];
     }
 

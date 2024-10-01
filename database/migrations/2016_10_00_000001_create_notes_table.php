@@ -42,14 +42,22 @@ return new class extends Migration
         $this->createSchema(function (Blueprint $table) {
             $table->increments('id');
             $table->text('content');
+            $table->string('title')->default('null');
             $table->morphs('noteable');
             $table->unsignedBigInteger('author_id')->nullable();
+            $table->unsignedBigInteger('folder_id')->nullable();
             $table->timestamps();
 
             $table->foreign('author_id')
                   ->references('id')
                   ->on((string) config('notes.authors.table', 'users'))
                   ->onDelete('cascade');
+                  
+            // Foreign key for folder
+            $table->foreign('folder_id')
+                  ->references('id')
+                  ->on('folders') 
+                  ->onDelete('set null'); 
         });
     }
 };
